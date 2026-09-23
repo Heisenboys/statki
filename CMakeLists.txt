@@ -24,6 +24,10 @@ add_executable(untitled2 main.cpp
         GameWindow.h
         SetupTile.cpp
         SetupTile.h
+        GameTile.cpp
+        GameTile.h
+        BotPlayer.cpp
+        BotPlayer.h
 )
 target_link_libraries(untitled2
         Qt::Core

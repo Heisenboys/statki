@@ -1,78 +1,50 @@
-//
-// Created by Karol on 29.05.2026.
-//
-
 #include "SetupTile.h"
 #include <QMimeData>
-#include <QDrag>
+#include <qguiapplication.h>
 #include <QMouseEvent>
-
+#include <QPainter>
 
 #include "Engine.h"
 
-SetupTile::SetupTile(int _row, int _col): row(_row), col(_col), isShip(false) {
-
+SetupTile::SetupTile(int _row, int _col, QWidget* parent): row(_row), col(_col), QWidget(parent) {
     setAcceptDrops(true);
+    setMouseTracking(true);
 
     setFixedSize(40, 40);
+    setStyleSheet("border: 2px solid black;");
 
+    connect(&Engine::instance(), &Engine::boardUpdate, this, [this](){update();});
 }
 
-SetupTile::SetupTile() {
-    setAcceptDrops(true);
+void SetupTile::paintEvent(QPaintEvent *event) {
+    Q_UNUSED(event);
 
-    setFixedSize(40, 40);
-}
+    QPainter painter(this);
 
+    painter.setPen(QPen(QColor(Qt::black), 2));
 
-void SetupTile::dragEnterEvent(QDragEnterEvent *event) {
-    if (event->mimeData()->hasText() && !isShip) {
-        event->acceptProposedAction();
+    if (Engine::instance().has_ship_at(OWNER, this->row, this->col)) {
+        painter.setBrush(QBrush(QColor(Qt::lightGray)));
+        if (Engine::instance().get_ship_at(OWNER,row, col).orientation == Orientation::Horizontal) {
+            painter.drawRoundedRect(0, 0, this->width()*Engine::instance().get_ship_at(OWNER,row, col).length, this->height(), 4, 4);
+        }
+        else {
+            painter.drawRoundedRect(0, 0, this->width(), this->height()*Engine::instance().get_ship_at(OWNER,row, col).length, 4, 4);
+        }
     }
-}
-
-void SetupTile::dropEvent(QDropEvent *event) {
-
-    shipLength = event->mimeData()->text().toInt();
-
-    Engine::instance().add_ship(row, col, shipLength);
-
-    isShip = true;
-    this->update_tile_appearance();
-    event->acceptProposedAction();
-
+    else {
+        painter.setBrush(QBrush(QColor(Qt::blue)));
+        painter.drawRoundedRect(0, 0, this->width(), this->height(), 4, 4);
+    }
+    painter.end();
 }
 
 void SetupTile::mousePressEvent(QMouseEvent *event) {
-    if (event->button() == Qt::LeftButton && isShip) {
-        QMimeData *mimeData =  new QMimeData();
-        mimeData->setText(QString::number(shipLength));
-
-        QDrag *drag = new QDrag(this);
-        drag->setPixmap(this->grab());
-        drag->setMimeData(mimeData);
-
-        isShip = false;
-        Engine::instance().remove_ship(row, col, shipLength);
-        this->update_tile_appearance();
-
-
-        Qt::DropAction dropAction = drag->exec(Qt::CopyAction | Qt::MoveAction);
-        if (dropAction == Qt::IgnoreAction) {
-            isShip = true;
-            Engine::instance().add_ship(row, col, shipLength);
-            this->update_tile_appearance();
-        }
-
-    }
+    emit tileClicked(row, col, event->button());
 }
 
-void SetupTile::update_tile_appearance() {
-    if (this->isShip){this->setText("S");}
-    else{this->setText(" ");}
-}
-
-void SetupTile::make_ship() {
-    this->isShip = true;
+void SetupTile::mouseMoveEvent(QMouseEvent *event) {
+    emit tileHovered(row, col, event->globalPosition());
+    QWidget::mouseMoveEvent(event);
 }
 

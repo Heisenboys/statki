@@ -1,37 +1,29 @@
-//
-// Created by Karol on 29.05.2026.
-//
-
 #ifndef SETUPTILE_H
 #define SETUPTILE_H
-#include <QLabel>
+#include <QWidget>
+
+#include "Engine.h"
 
 
-class SetupTile: public QLabel {
+class SetupTile: public QWidget {
     Q_OBJECT
 public:
-    SetupTile();
-    SetupTile(int row, int col);
-
-    void update_tile_appearance();
-
-    void make_ship();
+    SetupTile(int row, int col, QWidget *parent);
 
 protected:
+    void paintEvent(QPaintEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
 
-    void dragEnterEvent(QDragEnterEvent *event) override;
-    void dropEvent(QDropEvent *event) override;
-
+    signals:
+    void tileClicked(int row, int col, Qt::MouseButton button);
+    void tileHovered(int row, int col, QPointF pos);
 
 private:
     int row;
     int col;
-    bool isShip;
-    int shipLength;
 
-
-
+    static constexpr auto OWNER = BoardOwner::Player;
 };
 
 

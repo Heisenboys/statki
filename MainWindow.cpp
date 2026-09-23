@@ -1,7 +1,3 @@
-//
-// Created by Karol on 28.05.2026.
-//
-
 #include "MainWindow.h"
 #include "SetupWindow.h"
 
