@@ -25,10 +25,10 @@ GameWindow::GameWindow() {
 
     for (int row = 0; row < 10; row++) {
         for (int col = 0; col < 10; col++) {
-            GameTile* tile = new GameTile(row, col, BoardOwner::Computer);
+            GameTile* tile = new GameTile(row, col, BoardOwner::Computer, this);
             top_layout->addWidget(tile, row,col );
             connect(tile, &GameTile::tileClicked, this, &GameWindow::playerMoved);
-            bottom_layout->addWidget(new GameTile(row, col, BoardOwner::Player),row,col );
+            bottom_layout->addWidget(new GameTile(row, col, BoardOwner::Player, this),row,col );
         }
     }
 
@@ -44,23 +44,24 @@ GameWindow::GameWindow() {
 }
 
 void GameWindow::playerMoved(int row, int col) {
-    if (!is_player_turn) {return;}
-    is_player_turn = false;
+    if (!isPlayerTurn) {return;}
+    isPlayerTurn = false;
     ShotResult result = Engine::instance().fire(BoardOwner::Computer, row, col);
     if (result == ShotResult::Miss) {
         delay(1000);
         return botMove();
     }
-    Winner winner = Engine::instance().is_game_ended();
-    if (winner != Winner::Unresolved) {
-        return gameEnd(winner);
-    }
+
     if (result == ShotResult::Sunk) {
-        label->setText("Zatopiony");
+        Winner winner = Engine::instance().isGameEnded();
+        if (winner != Winner::Unresolved) {
+            return gameEnd(winner);
+        }
+        label->setText("Zatopiony");//DO ZMIANY
         delay(2000);
         label->clear();
     }
-    is_player_turn = true;
+    isPlayerTurn = true;
     return;
 }
 
@@ -68,16 +69,15 @@ void GameWindow::botMove() {
     std::pair<int,int> move= botPlayer.calculateNextMove();
     ShotResult result = botPlayer.makeMove(move.first, move.second);
     if (result == ShotResult::Miss) {
-        is_player_turn = true;
+        isPlayerTurn = true;
         return;
     }
-    if (result == ShotResult::Hit || result == ShotResult::Sunk) {
-        Winner winner = Engine::instance().is_game_ended();
-        if (winner != Winner::Unresolved) {return gameEnd(winner);}
-        delay(1000);
-        return botMove();
-    }
-    if (result == ShotResult::Invalid) {
+    if (result == ShotResult::Hit || result == ShotResult::Sunk || result == ShotResult::Invalid) {
+        if (result == ShotResult::Sunk){
+            Winner winner = Engine::instance().isGameEnded();
+            if (winner != Winner::Unresolved) {return gameEnd(winner);}
+        }
+        if (result == ShotResult::Hit) {delay(1000);}
         return botMove();
     }
 }
@@ -102,7 +102,7 @@ void GameWindow::gameEnd(Winner winner) {
     else {
         resultLabel->setText("Porażka\nKomputer zniszczył twoją flotę.");
     }
-
+    this->close();
     endScreen->exec();
 }
 

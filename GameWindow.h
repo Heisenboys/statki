@@ -9,9 +9,9 @@
 class GameWindow : public QWidget{
     Q_OBJECT
     BotPlayer botPlayer;
-    bool is_player_turn = true;
+    bool isPlayerTurn = true;
 
-    QLabel* label;
+    QLabel* label;//DO ZMIANY
     public:
     GameWindow();
     public slots:

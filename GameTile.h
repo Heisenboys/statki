@@ -10,7 +10,7 @@ class GameTile: public QWidget{
     int row, col;
     BoardOwner owner;
 public:
-    GameTile(int row, int column, BoardOwner owner);
+    GameTile(int row, int column, BoardOwner owner, QWidget* parent);
 signals:
     void tileClicked(int row, int col);
 
@@ -18,9 +18,6 @@ protected:
     void paintEvent(QPaintEvent *event) override;
 
     void mousePressEvent(QMouseEvent *event) override;
-
-
-
 };
 
 

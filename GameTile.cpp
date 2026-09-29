@@ -6,11 +6,9 @@
 #include "Engine.h"
 
 
-GameTile::GameTile(int _row, int _col, BoardOwner _owner): row(_row), col(_col), owner(_owner) {
+GameTile::GameTile(int _row, int _col, BoardOwner _owner, QWidget* parent): row(_row), col(_col), owner(_owner) {
     setFixedSize(40,40);
-
     connect(&Engine::instance(),&Engine::boardUpdate, this, [this](){update();});
-
 }
 
 void GameTile::paintEvent(QPaintEvent *event) {
@@ -22,15 +20,15 @@ void GameTile::paintEvent(QPaintEvent *event) {
     painter.setBrush(QBrush(Qt::blue));
     painter.drawRect(0, 0, this->width(), this->height());
 
-    if (owner == BoardOwner::Computer && Engine::instance().is_tile_hit(owner, row, col) || owner == BoardOwner::Player) {
-        if (Engine::instance().has_ship_at(owner, row, col)) {
+    if (owner == BoardOwner::Computer && Engine::instance().isTileHit(owner, row, col) || owner == BoardOwner::Player) {
+        if (Engine::instance().hasShipAt(owner, row, col)) {
             painter.setBrush(QBrush(Qt::lightGray));
             painter.drawRoundedRect(0, 0, this->width(), this->height(), 4, 4);
         }
     }
 
-    if (Engine::instance().is_tile_hit(owner, row, col)) {
-        if (Engine::instance().has_ship_at(owner, row, col)) {
+    if (Engine::instance().isTileHit(owner, row, col)) {
+        if (Engine::instance().hasShipAt(owner, row, col)) {
             painter.setBrush(QBrush(Qt::red));
         }
         else {
@@ -42,7 +40,7 @@ void GameTile::paintEvent(QPaintEvent *event) {
 
 void GameTile::mousePressEvent(QMouseEvent *event) {
     if (event->button() == Qt::LeftButton) {
-        if (owner == BoardOwner::Computer && !Engine::instance().is_tile_hit(owner, row, col)) {
+        if (owner == BoardOwner::Computer && !Engine::instance().isTileHit(owner, row, col)) {
             emit tileClicked(row, col);
         }
     }

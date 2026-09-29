@@ -39,56 +39,52 @@ class Engine: public QObject {
     Engine() = default;
     ~Engine() = default;
 
+    TileData playerBoard[10][10] = {};
+    TileData computerBoard[10][10] = {};
+
+    std::vector<ShipData> playerShips;
+    std::vector<ShipData> computerShips;
+
+    TileData& getTileInternal(BoardOwner owner, int row, int col);
+
+    std::vector<ShipData>& getShipInternal(BoardOwner owner);
+
+public:
     Engine(const Engine &) = delete;
     Engine &operator=(const Engine &) = delete;
 
-    TileData player_board[10][10] = {};
-    TileData computer_board[10][10] = {};
-
-    std::vector<ShipData> player_ships;
-    std::vector<ShipData> computer_ships;
-
-    TileData& get_tile_internal(BoardOwner owner, int row, int col);
-
-    std::vector<ShipData>& get_ship_internal(BoardOwner owner);
-
-public:
     static Engine& instance();
 
-    bool placeShip(int row, int col, int length, Orientation orientation, int id);
+    void placeShip(BoardOwner owner, int startRow, int startCol, int length, Orientation orientation, int id);
 
-    void pickup_ship(int row, int col);
+    void pickupShip(int row, int col);
 
-    void cancel_pickup(ShipData ship, int id);
+    void cancelPickup(ShipData ship, int id);
 
-    void setup_ships();
+    void setupPlayerShips();
 
-    void add_ship(BoardOwner owner, int row, int col, int length, Orientation orientation);
+    void addShip(BoardOwner owner, int startRow, int startCol, int length, Orientation orientation);
 
-    bool can_add_ship(int startRow, int startCol, int length, Orientation orientation);
+    bool canPlaceShip(BoardOwner owner, int startRow, int startCol, int length, Orientation orientation);
 
-    void clear_computer_board();
+    void clearComputerBoard();
 
-    bool ship_setup_correct();
+    bool hasShipAt(BoardOwner owner, int row, int col);
 
-    bool has_ship_at(BoardOwner owner, int row, int col);
+    ShipData getShipAt(BoardOwner owner, int row, int col);
 
-    ShipData get_ship_at(BoardOwner owner, int row, int col);
-
-    TileData get_tile_at(BoardOwner owner, int row, int col);
+    TileData getTileAt(BoardOwner owner, int row, int col);
 
     ShotResult fire(BoardOwner owner, int row, int col);
 
-    bool ship_sunken(BoardOwner owner, int row, int col);
+    bool isShipSunken(BoardOwner owner, int row, int col);
 
-    bool is_tile_hit(BoardOwner owner, int row, int col);
+    bool isTileHit(BoardOwner owner, int row, int col);
 
-    Winner is_game_ended();
+    Winner isGameEnded();
 
     signals:
         void boardUpdate();
 };
-
-
 
 #endif //ENGINE_H

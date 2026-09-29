@@ -8,12 +8,12 @@ MainWindow::MainWindow() {
     QVBoxLayout *layout = new QVBoxLayout();
     start_button = new QPushButton();
     start_button->setText("Zacznij gre");
-    connect(start_button, &QPushButton::clicked, this, &MainWindow::on_button_clicked);
+    connect(start_button, &QPushButton::clicked, this, &MainWindow::on_startButtonClicked);
     layout->addWidget(start_button);
     this->setLayout(layout);
 }
 
-void MainWindow::on_button_clicked() {
+void MainWindow::on_startButtonClicked() {
     start_button->setEnabled(false);
     SetupWindow* setupWindow = new SetupWindow();
     setupWindow->show();

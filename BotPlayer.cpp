@@ -17,13 +17,13 @@ void BotPlayer::randomizeShips() {
             int startCol = QRandomGenerator::global()->bounded(0, 10);
             int length = lengths.back();
             Orientation orientation = (QRandomGenerator::global()->bounded(0, 2)==0)?Orientation::Vertical:Orientation::Horizontal;
-            if (Engine::instance().can_add_ship(startRow, startCol, length, orientation)) {
+            if (Engine::instance().canPlaceShip(BoardOwner::Computer, startRow, startCol, length, orientation)) {
                 lengths.pop_back();
-                Engine::instance().add_ship(BoardOwner::Computer, startRow, startCol, length, orientation);
+                Engine::instance().addShip(BoardOwner::Computer, startRow, startCol, length, orientation);
             }
         }
         if (tries>=500) {
-            Engine::instance().clear_computer_board();
+            Engine::instance().clearComputerBoard();
         }
         else {
             break;

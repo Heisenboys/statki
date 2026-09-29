@@ -12,7 +12,7 @@ class MainWindow: public QWidget{
     QPushButton *start_button;
 
     private slots:
-    void on_button_clicked();
+    void on_startButtonClicked();
 };
 
 #endif //MAINWINDOW_H

@@ -28,6 +28,8 @@ add_executable(untitled2 main.cpp
         GameTile.h
         BotPlayer.cpp
         BotPlayer.h
+        Tile.cpp
+        Tile.h
 )
 target_link_libraries(untitled2
         Qt::Core

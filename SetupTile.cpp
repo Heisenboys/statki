@@ -20,16 +20,16 @@ void SetupTile::paintEvent(QPaintEvent *event) {
     Q_UNUSED(event);
 
     QPainter painter(this);
+    auto color = (isTileHovered)?Qt::white:Qt::black;
+    painter.setPen(QPen(QColor(color), 2));
 
-    painter.setPen(QPen(QColor(Qt::black), 2));
-
-    if (Engine::instance().has_ship_at(OWNER, this->row, this->col)) {
+    if (Engine::instance().hasShipAt(OWNER, this->row, this->col)) {
         painter.setBrush(QBrush(QColor(Qt::lightGray)));
-        if (Engine::instance().get_ship_at(OWNER,row, col).orientation == Orientation::Horizontal) {
-            painter.drawRoundedRect(0, 0, this->width()*Engine::instance().get_ship_at(OWNER,row, col).length, this->height(), 4, 4);
+        if (Engine::instance().getShipAt(OWNER,row, col).orientation == Orientation::Horizontal) {
+            painter.drawRoundedRect(0, 0, this->width()*Engine::instance().getShipAt(OWNER,row, col).length, this->height(), 4, 4);
         }
         else {
-            painter.drawRoundedRect(0, 0, this->width(), this->height()*Engine::instance().get_ship_at(OWNER,row, col).length, 4, 4);
+            painter.drawRoundedRect(0, 0, this->width(), this->height()*Engine::instance().getShipAt(OWNER,row, col).length, 4, 4);
         }
     }
     else {
@@ -44,7 +44,23 @@ void SetupTile::mousePressEvent(QMouseEvent *event) {
 }
 
 void SetupTile::mouseMoveEvent(QMouseEvent *event) {
-    emit tileHovered(row, col, event->globalPosition());
+    emit tileMouseMoved(row, col, event->globalPosition());
     QWidget::mouseMoveEvent(event);
 }
+
+void SetupTile::enterEvent(QEnterEvent *event) {
+    emit tileHovered(this);
+    //QWidget::enterEvent(event);
+}
+
+void SetupTile::leaveEvent(QEvent *event) {
+    isTileHovered = false;
+    update();
+}
+
+void SetupTile::setGlowing(bool value){isTileHovered = value;}
+
+int SetupTile::getRow(){return this->row;}
+
+int SetupTile::getCol(){return this->col;}
 

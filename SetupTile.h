@@ -10,20 +10,32 @@ class SetupTile: public QWidget {
 public:
     SetupTile(int row, int col, QWidget *parent);
 
+    void setGlowing(bool value);
+    int getRow();
+    int getCol();
+
 protected:
     void paintEvent(QPaintEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
+    void enterEvent(QEnterEvent *event) override;
+    void leaveEvent(QEvent *event) override;
 
     signals:
     void tileClicked(int row, int col, Qt::MouseButton button);
-    void tileHovered(int row, int col, QPointF pos);
+    void tileHovered(SetupTile *widget);
+    void tileMouseMoved(int row, int col, QPointF pos);
+
 
 private:
     int row;
     int col;
 
+    bool isTileHovered = false;
+
     static constexpr auto OWNER = BoardOwner::Player;
+
+
 };
 
 

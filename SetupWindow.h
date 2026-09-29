@@ -6,13 +6,15 @@
 #include "SetupTile.h"
 
 class SetupWindow: public QWidget{
+
 public:
     SetupWindow();
 
     private slots:
-    void on_button_clicked();
+    void on_buttonClicked();
     void on_tileClicked(int row, int col, Qt::MouseButton button);
-    void on_mouse_move(int row, int col, QPointF pos);
+    void on_mouseMove(int row, int col, QPointF pos);
+    void on_tileHovered(SetupTile *widget);
 
     private:
     static constexpr auto OWNER = BoardOwner::Player;
@@ -24,6 +26,7 @@ public:
     Orientation originalOrientation;
 
     QLabel* previewLabel = nullptr;
+    bool previewLabelInvalidPlacement = false;
 
     void updatePreview(QPoint pos);
 
