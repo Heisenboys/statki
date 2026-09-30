@@ -13,23 +13,23 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
-add_executable(untitled2 main.cpp
-        MainWindow.cpp
-        MainWindow.h
-        Engine.cpp
-        Engine.h
-        SetupWindow.cpp
-        SetupWindow.h
-        GameWindow.cpp
-        GameWindow.h
-        SetupTile.cpp
-        SetupTile.h
-        GameTile.cpp
-        GameTile.h
-        BotPlayer.cpp
-        BotPlayer.h
-        Tile.cpp
-        Tile.h
+add_executable(untitled2 src/main.cpp
+        src/MainWindow.cpp
+        src/MainWindow.h
+        src/Engine.cpp
+        src/Engine.h
+        src/SetupWindow.cpp
+        src/SetupWindow.h
+        src/GameWindow.cpp
+        src/GameWindow.h
+        src/SetupTile.cpp
+        src/SetupTile.h
+        src/GameTile.cpp
+        src/GameTile.h
+        src/BotPlayer.cpp
+        src/BotPlayer.h
+        src/Tile.cpp
+        src/Tile.h
 )
 target_link_libraries(untitled2
         Qt::Core

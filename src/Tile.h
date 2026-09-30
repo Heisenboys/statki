@@ -16,7 +16,8 @@ public:
     BoardOwner getOwner() const {return owner;}
 protected:
     void paintEvent(QPaintEvent *event) override;
-    void mousePressEvent(QMouseEvent *event) override;
+
+    virtual void drawContent (QPainter &painter) = 0;
 
     const int row;
     const int col;

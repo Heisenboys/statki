@@ -11,7 +11,13 @@
 #include "Engine.h"
 
 GameWindow::GameWindow() {
+    setWindowTitle("Faza bitwy");
     QVBoxLayout * main_layout = new QVBoxLayout(this);
+
+    auto description1 = new QLabel(this);
+    auto description2 = new QLabel(this);
+    description1->setText("Plansza przeciwnika:");
+    description2->setText("Plansza gracza:");
 
     QWidget* top_grid = new QWidget(this);
     QGridLayout * top_layout = new QGridLayout();
@@ -35,9 +41,9 @@ GameWindow::GameWindow() {
 
     bottom_grid->setLayout(bottom_layout);
     top_grid->setLayout(top_layout);
+    main_layout->addWidget(description1);
     main_layout->addWidget(top_grid);
-    label = new QLabel(this);
-    main_layout->addWidget(label);
+    main_layout->addWidget(description2);
     main_layout->addWidget(bottom_grid);
 
     this->setLayout(main_layout);
@@ -57,9 +63,6 @@ void GameWindow::playerMoved(int row, int col) {
         if (winner != Winner::Unresolved) {
             return gameEnd(winner);
         }
-        label->setText("Zatopiony");//DO ZMIANY
-        delay(2000);
-        label->clear();
     }
     isPlayerTurn = true;
     return;
@@ -77,7 +80,7 @@ void GameWindow::botMove() {
             Winner winner = Engine::instance().isGameEnded();
             if (winner != Winner::Unresolved) {return gameEnd(winner);}
         }
-        if (result == ShotResult::Hit) {delay(1000);}
+        if (result == ShotResult::Hit || result == ShotResult::Sunk) {delay(1000);}
         return botMove();
     }
 }
@@ -103,6 +106,7 @@ void GameWindow::gameEnd(Winner winner) {
         resultLabel->setText("Porażka\nKomputer zniszczył twoją flotę.");
     }
     this->close();
+    endScreen->adjustSize();
     endScreen->exec();
 }
 

@@ -10,15 +10,20 @@
 #include "SetupTile.h"
 
 SetupWindow::SetupWindow() {
+    setWindowTitle("Faza planowania");
     previewLabel = new QLabel(this);
     previewLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     previewLabel->raise();
     previewLabel->hide();
 
-    QVBoxLayout *layout = new QVBoxLayout();
-    QGridLayout *gridLayout = new QGridLayout();
+    auto descriptionLabel = new QLabel(this);
+    descriptionLabel->setText("Faza planowania");
+
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->addWidget(descriptionLabel);
+    QGridLayout *gridLayout = new QGridLayout(this);
     gridLayout->setSpacing(0);
-    gridLayout->setContentsMargins(0,0,0,0);
+
     for (int r = 0; r<10; r++) {
         for (int c = 0; c<10; c++) {
             SetupTile *tile = new SetupTile(r, c, this);
@@ -111,14 +116,11 @@ void SetupWindow::updatePreview(QPoint pos) {
     previewLabel->setFixedSize(width, height);
 
     QPixmap pixmap(width, height);
-    pixmap.fill(Qt::transparent);
-
     QPainter painter(&pixmap);
     if (previewLabelInvalidPlacement){painter.setBrush(QColor(Qt::red));}
     else{painter.setBrush(QColor(Qt::lightGray));}
-    painter.setPen(QPen(QColor(Qt::black)));
-    painter.drawRoundedRect(1, 1, width, height, 4, 4);
-
+    painter.setPen(Qt::NoPen);
+    painter.drawRect(0, 0, width, height);
     painter.end();
     previewLabel->setPixmap(pixmap);
 
@@ -126,21 +128,15 @@ void SetupWindow::updatePreview(QPoint pos) {
     int hotY = (heldShip.orientation == Orientation::Horizontal) ? 40/2 : mastIdx*40+40/2;
 
     previewLabel->move(pos.x() - hotX, pos.y() - hotY);
-
-
 }
 
-void SetupWindow::on_tileHovered(SetupTile* widget) {
+void SetupWindow::on_tileHovered(int row, int col) {
     if (isHolding) {
-        int startRow = (heldShip.orientation == Orientation::Horizontal) ? widget->getRow() : widget->getRow()-mastIdx;
-        int startCol = (heldShip.orientation == Orientation::Vertical) ? widget->getCol() : widget->getCol()-mastIdx;
+        int startRow = (heldShip.orientation == Orientation::Horizontal) ? row : row-mastIdx;
+        int startCol = (heldShip.orientation == Orientation::Vertical) ? col : col-mastIdx;
 
         previewLabelInvalidPlacement = !Engine::instance().canPlaceShip(OWNER, startRow, startCol, heldShip.length, heldShip.orientation);
         updatePreview(mapFromGlobal(QCursor::pos()));
-    }
-    else {
-        widget->setGlowing(true);
-        widget->update();
     }
 }
 

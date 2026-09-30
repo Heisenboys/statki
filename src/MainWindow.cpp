@@ -1,4 +1,5 @@
 #include "MainWindow.h"
+#include <QApplication>
 #include "SetupWindow.h"
 
 #include <QPushButton>
@@ -11,6 +12,7 @@ MainWindow::MainWindow() {
     connect(start_button, &QPushButton::clicked, this, &MainWindow::on_startButtonClicked);
     layout->addWidget(start_button);
     this->setLayout(layout);
+    setWindowTitle(QApplication::translate("MainWindow", "Menu", 0));
 }
 
 void MainWindow::on_startButtonClicked() {

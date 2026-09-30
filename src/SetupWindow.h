@@ -14,7 +14,7 @@ public:
     void on_buttonClicked();
     void on_tileClicked(int row, int col, Qt::MouseButton button);
     void on_mouseMove(int row, int col, QPointF pos);
-    void on_tileHovered(SetupTile *widget);
+    void on_tileHovered(int row, int col);
 
     private:
     static constexpr auto OWNER = BoardOwner::Player;

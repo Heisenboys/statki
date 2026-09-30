@@ -6,34 +6,29 @@
 #include "Engine.h"
 
 
-GameTile::GameTile(int _row, int _col, BoardOwner _owner, QWidget* parent): row(_row), col(_col), owner(_owner) {
-    setFixedSize(40,40);
-    connect(&Engine::instance(),&Engine::boardUpdate, this, [this](){update();});
+GameTile::GameTile(int row, int col, BoardOwner owner, QWidget* parent): Tile(row, col, owner, parent) {
 }
 
-void GameTile::paintEvent(QPaintEvent *event) {
-    Q_UNUSED(event);
+void GameTile::drawContent(QPainter& painter) {
+    const bool isComputerHit = (owner == BoardOwner::Computer) && Engine::instance().isTileHit(owner, row, col);
+    const bool isPlayer = (owner == BoardOwner::Player);
+    const bool isSunken = (Engine::instance().isShipSunken(owner, row, col));
 
-    QPainter painter(this);
-
-    painter.setPen(QPen(Qt::black));
-    painter.setBrush(QBrush(Qt::blue));
-    painter.drawRect(0, 0, this->width(), this->height());
-
-    if (owner == BoardOwner::Computer && Engine::instance().isTileHit(owner, row, col) || owner == BoardOwner::Player) {
+    if (isComputerHit || isPlayer) {
         if (Engine::instance().hasShipAt(owner, row, col)) {
             painter.setBrush(QBrush(Qt::lightGray));
-            painter.drawRoundedRect(0, 0, this->width(), this->height(), 4, 4);
+            painter.setPen(QPen(Qt::NoPen));
+            painter.drawRect(0, 0, width(), height());
         }
     }
-
     if (Engine::instance().isTileHit(owner, row, col)) {
         if (Engine::instance().hasShipAt(owner, row, col)) {
-            painter.setBrush(QBrush(Qt::red));
-        }
-        else {
+            if (isSunken){ painter.setBrush(QBrush(Qt::black)); }
+            else{painter.setBrush(QBrush(Qt::red));}
+        }else {
             painter.setBrush(QBrush(Qt::white));
         }
+        painter.setPen(Qt::NoPen);
         painter.drawEllipse(rect().center(), this->width()/4, this->height()/4);
     }
 }
